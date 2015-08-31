@@ -21,8 +21,7 @@ module.exports = function (grunt) {
       fonts: this.app + '/static/fonts',
       images: this.app + '/static/images',
       js: this.app + '/static/js',
-      manageScript: 'manage.py',
-      
+      manageScript: 'manage.py'
     }
   };
 
@@ -36,12 +35,9 @@ module.exports = function (grunt) {
       gruntfile: {
         files: ['Gruntfile.js']
       },
-      sass: {
+      compass: {
         files: ['<%= paths.sass %>/**/*.{scss,sass}'],
-        tasks: ['sass:dev'],
-        options: {
-          atBegin: true
-        }
+        tasks: ['compass:server']
       },
       livereload: {
         files: [
@@ -56,52 +52,26 @@ module.exports = function (grunt) {
       },
     },
 
-    // see: https://github.com/sindresorhus/grunt-sass
-    sass: {
-      dev: {
-          options: {
-              outputStyle: 'nested',
-              sourceMap: false,
-              precision: 10
-          },
-          files: {
-              '<%= paths.css %>/project.css': '<%= paths.sass %>/project.scss'
-          },
-      },
-      dist: {
-          options: {
-              outputStyle: 'compressed',
-              sourceMap: false,
-              precision: 10
-          },
-          files: {
-              '<%= paths.css %>/project.css': '<%= paths.sass %>/project.scss'
-          },
-      }
-    },
-    
-    //see https://github.com/nDmitry/grunt-postcss
-    postcss: {
+    // see: https://github.com/gruntjs/grunt-contrib-compass
+    compass: {
       options: {
-        map: true, // inline sourcemaps
-
-        processors: [
-          require('pixrem')(), // add fallbacks for rem units
-          require('autoprefixer-core')({browsers: [
-            'Android 2.3',
-            'Android >= 4',
-            'Chrome >= 20',
-            'Firefox >= 24',
-            'Explorer >= 8',
-            'iOS >= 6',
-            'Opera >= 12',
-            'Safari >= 6'
-          ]}), // add vendor prefixes
-          require('cssnano')() // minify the result
-        ]
+          sassDir: '<%= paths.sass %>',
+          cssDir: '<%= paths.css %>',
+          fontsDir: '<%= paths.fonts %>',
+          imagesDir: '<%= paths.images %>',
+          relativeAssets: false,
+          assetCacheBuster: false,
+          raw: 'Sass::Script::Number.precision = 10\n'
       },
       dist: {
-        src: '<%= paths.css %>/*.css'
+        options: {
+          environment: 'production'
+        }
+      },
+      server: {
+        options: {
+          // debugInfo: true
+        }
       }
     },
 
@@ -112,8 +82,7 @@ module.exports = function (grunt) {
       },
       runDjango: {
         cmd: 'python <%= paths.manageScript %> runserver'
-      },
-      
+      }
     }
   });
 
@@ -123,12 +92,10 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('build', [
-    'sass:dist',
-    'postcss'
+    'compass:dist'
   ]);
 
   grunt.registerTask('default', [
     'build'
   ]);
-  
 };

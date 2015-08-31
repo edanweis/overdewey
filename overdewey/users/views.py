@@ -3,10 +3,15 @@ from __future__ import absolute_import, unicode_literals
 
 from django.core.urlresolvers import reverse
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView
+from django.contrib.auth import get_user_model
+from rest_framework import permissions, viewsets
+from oauth2_provider.ext.rest_framework import TokenHasReadWriteScope
 
 from braces.views import LoginRequiredMixin
 
+from .forms import UserForm
 from .models import User
+from .serializers import UserSerializer
 
 
 class UserDetailView(LoginRequiredMixin, DetailView):
@@ -26,7 +31,7 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
 
 class UserUpdateView(LoginRequiredMixin, UpdateView):
 
-    fields = ['name', ]
+    form_class = UserForm
 
     # we already imported User in the view code above, remember?
     model = User
@@ -46,3 +51,9 @@ class UserListView(LoginRequiredMixin, ListView):
     # These next two lines tell the view to index lookups by username
     slug_field = "username"
     slug_url_kwarg = "username"
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAuthenticated, TokenHasReadWriteScope]
+    queryset = get_user_model().objects.all()
+    serializer_class = UserSerializer
