@@ -12,6 +12,10 @@ zlib1g-dev
 ##Postgresql and psycopg2 dependencies
 libpq-dev
 
+##pylibmc
+libmemcached-dev
+libssl-dev
+
 ##Pillow dependencies
 libtiff4-dev
 libjpeg8-dev
@@ -19,9 +23,6 @@ libfreetype6-dev
 liblcms1-dev
 libwebp-dev
 
-##pylibmc
-libmemcached-dev
-libssl-dev
 
 ##django-extensions
 graphviz-dev
